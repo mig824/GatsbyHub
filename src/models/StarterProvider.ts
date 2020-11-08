@@ -12,8 +12,7 @@ export default class StarterProvider implements TreeDataProvider<Starter> {
 	}
 
 	async createStarters(): Promise<Starter[]> {
-		const npmData = new NpmData();
-		return (await Promise.all(await npmData.getNpmPackages('starter'))).map(
+		return (await Promise.all(await NpmData.getStarters())).map(
 			(obj: PluginPkg) =>
 				new Starter(obj.name, {
 					command: 'null',

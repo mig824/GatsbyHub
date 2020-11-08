@@ -1,6 +1,7 @@
 import got from 'got';
 import * as marked from 'marked';
-import { PluginPkg, NpmPkg } from '../utils/Interfaces';
+import { safeLoadAll } from 'js-yaml';
+import { PluginPkg, NpmPkg, Starter } from '../utils/Interfaces';
 
 export default class NpmData {
 	pluginKeywords: string[];
@@ -152,6 +153,38 @@ export default class NpmData {
 		);
 
 		return npmPackages;
+	}
+
+	public static async getStarters() {
+		try {
+			const data = await got(
+				'https://raw.githubusercontent.com/gatsbyjs/gatsby/master/docs/starters.yml'
+			);
+
+			if (!data) {
+				throw new Error("Couldn't fetch starters");
+			}
+
+			const starters = safeLoadAll(data.body);
+			const starterInfo: [] = starters[0]
+				.map((starter: Starter) => {
+					const { repo, description } = starter;
+					const name = repo.slice(repo.indexOf('gatsby-'));
+					if (name.includes('gatsby')) {
+						return { name, repo, description };
+					}
+					return null;
+				})
+				.filter(
+					(
+						starter: { name: string; repo: string; description: string } | null
+					) => starter !== null
+				);
+
+			return starterInfo;
+		} catch (error) {
+			throw new Error(error);
+		}
 	}
 
 	private static async getReadMe(
