@@ -44,3 +44,11 @@ export interface NpmTreeItem {
 		];
 	};
 }
+
+export interface Starter {
+	url: string;
+	repo: string;
+	description: string;
+	tags: string[];
+	features: string[];
+}
