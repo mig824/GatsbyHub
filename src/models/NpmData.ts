@@ -179,8 +179,10 @@ export default class NpmData {
 					(
 						starter: { name: string; repo: string; description: string } | null
 					) => starter !== null
-				);
-
+				)
+				.sort((a: { name: string; repo: string; description: string }) => {
+					return a.repo.includes('gatsbyjs') ? -1 : 1;
+				});
 			return starterInfo;
 		} catch (error) {
 			throw new Error(error);
@@ -205,6 +207,24 @@ export default class NpmData {
 			const response = await got(goodUrl);
 			return response.body;
 		} catch (error) {
+			/**
+			 * If the first request returns a 404
+			 * try making the call again to the main branch
+			 * instead of the master branch
+			 *
+			 * repos made after 10/2020 will have main instead of master
+			 * the following conditional handles those checks
+			 */
+			if (error.response.statusCode === 404) {
+				try {
+					const url = error.response.requestUrl.replace('master', 'main');
+					const response = await got(url);
+					return response.body;
+				} catch (e) {
+					throw new Error(e);
+				}
+			}
+
 			throw new Error(error);
 		}
 	}
