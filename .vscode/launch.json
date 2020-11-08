@@ -14,7 +14,7 @@
 			"preLaunchTask": "npm: vscode:prepublish"
 		},
 		{
-			"name": "Development GatsbyHub",
+			"name": "Dev Launch",
 			"type": "extensionHost",
 			"request": "launch",
 			"args": ["--extensionDevelopmentPath=${workspaceFolder}"],
