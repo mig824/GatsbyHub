@@ -64,7 +64,7 @@ export default class GatsbyCli {
 	 * note: new site will be created wherever the root directory is currently located
 	 * the user terminal should be at the directory user wishes to download the files.
 	 */
-	async createSite(starterObj?: NpmTreeItem): Promise<void> {
+	async createSite(starterObj?: any): Promise<void> {
 		// get GatsbyHub terminal or create a new terminal if it doesn't exist
 		const activeTerminal = Utilities.getActiveTerminal();
 
@@ -125,9 +125,9 @@ export default class GatsbyCli {
 		// send command to the terminal,
 		if (siteName) {
 			if (starterObj && starterObj.command) {
-				const { repository } = starterObj.command.arguments[0].links;
+				const { repo } = starterObj.command.arguments[0];
 				activeTerminal.sendText(
-					`gatsby new ${siteName} ${repository} && cd ${siteName}`
+					`gatsby new ${siteName} ${repo} && cd ${siteName}`
 				);
 				activeTerminal.sendText('code .');
 				activeTerminal.show(true);

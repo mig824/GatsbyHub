@@ -1,7 +1,7 @@
 import { window, ViewColumn } from 'vscode';
 import got from 'got';
 import * as marked from 'marked';
-import PluginData from '../models/NpmData';
+import NpmData from '../models/NpmData';
 import { NpmTreeItem } from '../utils/Interfaces';
 
 export default class WebViews {
@@ -12,7 +12,7 @@ export default class WebViews {
 			version,
 			description,
 		} = npmPackage.command.arguments[0];
-		const readMe = await PluginData.mdToHtml(links.repository, links.homepage);
+		const readMe = await NpmData.mdToHtml(links.repository, links.homepage);
 
 		// turn npm package name from snake-case to standard capitalized title
 		const title = name
@@ -71,6 +71,61 @@ export default class WebViews {
 				panel.dispose();
 			}
 		});
+	}
+
+	static async openStarterWebView(starter?: any) {
+		if (starter.command.arguments[0].name.includes('starter')) {
+			const { name, repo, description } = starter.command.arguments[0];
+			const readMe = await NpmData.mdToHtml(repo, name);
+			const panel = window.createWebviewPanel(
+				'plugin',
+				`${name}`,
+				ViewColumn.One
+			);
+
+			panel.webview.html = `
+			<style>
+				.plugin-header {
+					position: fixed;
+					top: 0;
+					background-color: var(--vscode-editor-background);
+					width: 100vw;
+				}
+	
+				#title-btn {
+					display: flex;
+					flex-direction: row;
+					align-items: center;
+					align-text: center;
+				}
+	
+				#install-btn {
+					height: 1.5rem;
+					margin: 1rem;
+				}
+	
+				body {
+					position: absolute;
+					top: 9rem;
+				}
+			</style>
+			<div class="plugin-header">
+				<div id="title-btn">
+					<h1 id="title">${name}</h1>
+				</div>
+				<p>${description}</p>
+				<hr class="solid">
+			</div>
+			${readMe}
+			`;
+
+			// close the webview when not looking at it
+			panel.onDidChangeViewState((e) => {
+				if (!e.webviewPanel.active) {
+					panel.dispose();
+				}
+			});
+		}
 	}
 
 	// open webview readme fo the Gatsby CLI commands
