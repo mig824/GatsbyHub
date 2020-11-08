@@ -74,16 +74,15 @@ export default class WebViews {
 	}
 
 	static async openStarterWebView(starter?: any) {
-		if (starter.command.arguments[0].name.includes('starter')) {
-			const { name, repo, description } = starter.command.arguments[0];
-			const readMe = await NpmData.mdToHtml(repo, name);
-			const panel = window.createWebviewPanel(
-				'plugin',
-				`${name}`,
-				ViewColumn.One
-			);
+		const { name, repo, description } = starter.command.arguments[0];
+		const readMe = await NpmData.mdToHtml(repo, name);
+		const panel = window.createWebviewPanel(
+			'plugin',
+			`${name}`,
+			ViewColumn.One
+		);
 
-			panel.webview.html = `
+		panel.webview.html = `
 			<style>
 				.plugin-header {
 					position: fixed;
@@ -119,13 +118,12 @@ export default class WebViews {
 			${readMe}
 			`;
 
-			// close the webview when not looking at it
-			panel.onDidChangeViewState((e) => {
-				if (!e.webviewPanel.active) {
-					panel.dispose();
-				}
-			});
-		}
+		// close the webview when not looking at it
+		panel.onDidChangeViewState((e) => {
+			if (!e.webviewPanel.active) {
+				panel.dispose();
+			}
+		});
 	}
 
 	// open webview readme fo the Gatsby CLI commands
