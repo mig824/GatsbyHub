@@ -40,6 +40,12 @@ export function activate(context: ExtensionContext) {
 		registerCommand('gatsbyhub.createWebView', WebViews.openWebView)
 	);
 	subscriptions.push(
+		registerCommand(
+			'gatsbyhub.createStarterWebView',
+			WebViews.openStarterWebView
+		)
+	);
+	subscriptions.push(
 		registerCommand('gatsbyhub.openCommandDocs', WebViews.openCommandDocs)
 	);
 	subscriptions.push(
